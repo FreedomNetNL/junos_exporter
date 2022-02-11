@@ -1,6 +1,5 @@
 project_name: junos-exporter
 
-dist: artifacts
 before:
    hooks:
      - go mod download
