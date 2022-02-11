@@ -1,3 +1,5 @@
+project_name: junos-exporter
+
 dist: artifacts
 before:
    hooks:
@@ -5,16 +7,28 @@ before:
 builds:
   - env:
     - CGO_ENABLED=0
-    goos:
-    - linux
-    - darwin
-    - freebsd
-    goarch:
-    - amd64
-    - arm
-    - arm64
-    ignore:
-    - goos: freebsd
-      goarch: arm64
-    ldflags: -s -w -X main.version={{.Version}}
-    binary: junos_exporter 
+
+nfpms:
+  - homepage:  https://freedom.nl
+    description: JunOS Exporter for Prometheus
+    maintainer: Freedom Internet DevOps <systeembeheer@freedomnet.nl>
+    license: MIT License
+    vendor: Freedom Internet
+    contents:
+      - src: scripts/defaults
+        dst: /etc/default/prometheus-junos-exporter
+      - src: scripts/systemd/prometheus-junos-exporter.service
+        dst: /usr/lib/systemd/system/prometheus-junos-exporter.service
+    formats:
+      - deb
+      - rpm
+    dependencies:
+      - systemd
+    scripts:
+        postinstall: scripts/postinstall.sh
+
+archives:
+  - id: archive
+    wrap_in_directory: true
+    files:
+      - README.md
